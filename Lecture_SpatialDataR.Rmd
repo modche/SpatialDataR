@@ -29,6 +29,7 @@ michael.stoelzle@hydro.uni-freiburg.de
 ```{r setup, include=FALSE}
 options(htmltools.dir.version = FALSE)
 library(tidyverse)
+library(flipbookr)
 ```
 
 ---
@@ -283,27 +284,31 @@ shp %>% st_drop_geometry %>% tibble()
 
 ---
 
-# Understand sf-objects (1/2): Data structure
+`r chunk_reveal("shp_structure", title = "# Understand sf-objects (1/2): Data structure")`
 
-.pull-left[
-```{r}
-st_coordinates(shp) %>%  dim()
-st_coordinates(shp) %>%  head(5)
-names(shp)
+
+```{r shp_structure, include=FALSE, echo = FALSE}
+
+#understand class of sf-objects
+class(shp) #BREAK
+
+#see data dimensions
+st_coordinates(shp) %>%  dim() #BREAK
+
+#extract raw data
+st_coordinates(shp) %>%  head(5) #BREAK
+
+#see column names
+names(shp) #BREAK
+
+#extract data
+shp %>% pull(name) %>% head(7) #BREAK
+
+#bounding box
+st_bbox(shp) #BREAK
 
 ```
-]
 
-.pull-right[
-
-```{r}
-as.data.frame(st_coordinates(shp)) %>%  
-  count(L2, sort = TRUE) %>% slice (1:10)
-
-
-```
-
-]
 
 ---
 
@@ -589,3 +594,38 @@ tmap_mode("view")
 # Spatial data analysis with sf in R
 
 Questions?
+
+
+---
+
+`r chunk_reveal("ggplot2_structure", title = "# Understand ggplot layering")`
+
+
+```{r ggplot2_structure, include=FALSE, echo = FALSE, warning=FALSE, out.height=5}
+
+library(palmerpenguins)
+theme_set(theme_bw(17))
+
+penguins_clean <- penguins %>%
+				  drop_na()
+
+ggplot(data = penguins_clean) + #BREAK
+	aes(x = bill_length_mm) + #BREAK
+	aes(y = bill_depth_mm) + #BREAK
+	geom_point(alpha = 0.75) + #BREAK
+	aes(colour = species) + #BREAK
+	aes(size = body_mass_g) + #BREAK
+	geom_smooth(method = 'lm', 
+				se = FALSE,
+				formula = 'y ~ x',
+				aes(
+				colour = species,
+				group = species)) +#BREAK
+	guides(size = 'none') + #BREAK
+	theme(legend.position = c(0.15,0.15))
+```
+
+
+---
+
+# End
